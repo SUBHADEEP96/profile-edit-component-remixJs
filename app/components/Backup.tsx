@@ -24,7 +24,13 @@ const ProfileCard: React.FC = () => {
   //
 
   const [imgSrc, setImgSrc] = useState("");
-  const [crop, setCrop] = useState<Crop>();
+  const [crop, setCrop] = useState<Crop>({
+    unit: "px", // Can be 'px' or '%'
+    x: 25,
+    y: 25,
+    width: 50,
+    height: 50,
+  });
   //
   const openModal = () => {
     setShowModal(true);
@@ -61,19 +67,27 @@ const ProfileCard: React.FC = () => {
     setZoomLevel((prev) => Math.max(prev - 10, 10));
   };
 
-  const onImageLoad = (e: any) => {
-    const { width, height } = e?.current?.target;
-    const crop = makeAspectCrop(
-      {
-        unit: "px",
-        width: MIN_DIMENSION,
-      },
-      ASPECT_RATIO,
+  function onImageLoad(e: any) {
+    const { naturalWidth: width, naturalHeight: height } = e.currentTarget;
+
+    const crop = centerCrop(
+      makeAspectCrop(
+        {
+          // You don't need to pass a complete crop into
+          // makeAspectCrop or centerCrop.
+          unit: "%",
+          width: 90,
+        },
+        1,
+        width,
+        height
+      ),
       width,
       height
     );
+
     setCrop(crop);
-  };
+  }
 
   return (
     <div className="max-w-5xl mx-auto bg-white shadow-md ">
@@ -196,7 +210,7 @@ const ProfileCard: React.FC = () => {
                       src={imgSrc}
                       className=" object-cover rounded-lg"
                       style={{ maxHeight: "170px" }}
-                      // onLoad={onImageLoad}
+                      onLoad={onImageLoad}
                     />
                   </ReactCrop>
                 </div>
