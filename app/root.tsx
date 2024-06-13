@@ -7,6 +7,7 @@ import {
 } from "@remix-run/react";
 // import "./tailwind.css";
 import type { LinksFunction } from "@remix-run/node";
+import "react-image-crop/dist/ReactCrop.css";
 import stylesheet from "~/tailwind.css?url";
 
 export const links: LinksFunction = () => [

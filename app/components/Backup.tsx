@@ -1,12 +1,31 @@
 import React, { useState } from "react";
 import { CameraIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { ArrowUpCircleIcon } from "@heroicons/react/24/outline";
-
+import {
+  ArrowUpCircleIcon,
+  PlusCircleIcon,
+  MinusCircleIcon,
+  ArrowUturnLeftIcon,
+  ArrowUturnRightIcon,
+} from "@heroicons/react/24/outline";
+import ReactCrop, {
+  centerCrop,
+  makeAspectCrop,
+  type Crop,
+} from "react-image-crop";
+const ASPECT_RATIO = 1;
+const MIN_DIMENSION = 150;
 const ProfileCard: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [imageSelected, setImageSelected] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(100);
+  const [rotation, setRotation] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  //
 
+  const [imgSrc, setImgSrc] = useState("");
+  const [crop, setCrop] = useState<Crop>();
+  //
   const openModal = () => {
     setShowModal(true);
   };
@@ -21,6 +40,39 @@ const ProfileCard: React.FC = () => {
       setUploadedImage(file);
       setImageSelected(true);
     }
+
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      const imageUrl = reader.result?.toString() || "";
+      setImgSrc(imageUrl);
+      console.log(imageUrl);
+    });
+    reader.readAsDataURL(file as Blob);
+  };
+
+  const handleZoomChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setZoomLevel(parseInt(event.target.value));
+  };
+  const zoomIn = () => {
+    setZoomLevel((prev) => prev + 10);
+  };
+
+  const zoomOut = () => {
+    setZoomLevel((prev) => Math.max(prev - 10, 10));
+  };
+
+  const onImageLoad = (e: any) => {
+    const { width, height } = e?.current?.target;
+    const crop = makeAspectCrop(
+      {
+        unit: "px",
+        width: MIN_DIMENSION,
+      },
+      ASPECT_RATIO,
+      width,
+      height
+    );
+    setCrop(crop);
   };
 
   return (
@@ -62,8 +114,8 @@ const ProfileCard: React.FC = () => {
             className="bg-white p-8 max-w-lg w-full  rounded-lg relative"
             style={{
               minHeight: "350px",
-              maxHeight: "90vh",
-              overflowY: "auto",
+              height: imageSelected ? "400px" : "350px",
+              transition: "height 0.3s ease",
             }}
           >
             {/* Close Icon */}
@@ -117,39 +169,63 @@ const ProfileCard: React.FC = () => {
                   />
                 </>
               ) : (
-                <>
-                  <img
+                <div
+                  className="flex justify-center items-center w-full h-full"
+                  style={{
+                    transform: `scale(${zoomLevel / 100})`,
+                  }}
+                >
+                  {/* <img
                     src={URL.createObjectURL(uploadedImage as Blob)}
                     alt=""
                     className="max-h-full max-w-full object-cover rounded-lg"
-                  />
-                </>
+                  /> */}
+                  <ReactCrop
+                    crop={crop}
+                    circularCrop
+                    keepSelection
+                    aspect={ASPECT_RATIO}
+                    minWidth={MIN_DIMENSION}
+                    onChange={(c) => {
+                      // console.log("c = > ", c);
+                      // const centeredCrop = centerCrop(c, c.width, c.height);
+                      return setCrop(c);
+                    }}
+                  >
+                    <img
+                      src={imgSrc}
+                      className=" object-cover rounded-lg"
+                      style={{ maxHeight: "170px" }}
+                      // onLoad={onImageLoad}
+                    />
+                  </ReactCrop>
+                </div>
               )}
             </div>
             {/* Image Controls */}
             {imageSelected && (
-              <div className="flex flex-between items-center mb-2">
-                <input
-                  type="range"
-                  min="0"
-                  max="360"
-                  value={0}
-                  onChange={() => {}}
-                  className="w-full mb-2"
-                />
-                <div className="flex space-x-4">
-                  <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-full"
-                    // onClick={flipImage}
-                  >
-                    Flip Image
-                  </button>
-                  <button
-                    className="bg-gray-500 text-white px-4 py-2 rounded-full"
-                    // onClick={resetImage}
-                  >
-                    Reset Image
-                  </button>
+              <div className="flex justify-between mb-2">
+                <div className="flex">
+                  <MinusCircleIcon
+                    className="h-6 w-6 cursor-pointer"
+                    onClick={zoomOut}
+                  />
+                  <input
+                    type="range"
+                    min="0"
+                    max="200"
+                    value={zoomLevel}
+                    onChange={handleZoomChange}
+                    className="w-40 mx-2"
+                  />
+                  <PlusCircleIcon
+                    className="h-6 w-6 cursor-pointer"
+                    onClick={zoomIn}
+                  />
+                </div>
+                <div className="flex space-x-2">
+                  <ArrowUturnLeftIcon className="h-6 w-6 cursor-pointer" />
+                  <ArrowUturnRightIcon className="h-6 w-6 cursor-pointer" />
                 </div>
               </div>
             )}
@@ -159,11 +235,16 @@ const ProfileCard: React.FC = () => {
             {/* Buttons */}
             <div className="flex justify-center">
               <button
-                className="bg-gray-200 text-black px-8 py-2 rounded-full mr-4"
+                className={`px-8 py-2 rounded-full mr-4 ${
+                  imageSelected
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
                 onClick={closeModal}
               >
                 Save
               </button>
+
               <button
                 className="border border-black text-black bg-white px-8 py-2 rounded-full"
                 onClick={closeModal}
