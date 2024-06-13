@@ -12,6 +12,9 @@ const ProfileCard: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [imageSelected, setImageSelected] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(100);
+  const [rotation, setRotation] = useState(0);
+  const [flipped, setFlipped] = useState(false);
 
   const openModal = () => {
     setShowModal(true);
@@ -27,6 +30,17 @@ const ProfileCard: React.FC = () => {
       setUploadedImage(file);
       setImageSelected(true);
     }
+  };
+
+  const handleZoomChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setZoomLevel(parseInt(event.target.value));
+  };
+  const zoomIn = () => {
+    setZoomLevel((prev) => prev + 10);
+  };
+
+  const zoomOut = () => {
+    setZoomLevel((prev) => Math.max(prev - 10, 10));
   };
 
   return (
@@ -123,29 +137,40 @@ const ProfileCard: React.FC = () => {
                   />
                 </>
               ) : (
-                <>
+                <div
+                  className="flex justify-center items-center w-full h-full"
+                  style={{
+                    transform: `scale(${zoomLevel / 100})`,
+                  }}
+                >
                   <img
                     src={URL.createObjectURL(uploadedImage as Blob)}
                     alt=""
                     className="max-h-full max-w-full object-cover rounded-lg"
                   />
-                </>
+                </div>
               )}
             </div>
             {/* Image Controls */}
             {imageSelected && (
               <div className="flex justify-between mb-2">
                 <div className="flex">
-                  <MinusCircleIcon className="h-6 w-6 cursor-pointer" />
+                  <MinusCircleIcon
+                    className="h-6 w-6 cursor-pointer"
+                    onClick={zoomOut}
+                  />
                   <input
                     type="range"
                     min="0"
-                    max="360"
-                    value={0}
-                    onChange={() => {}}
-                    className="w-40"
+                    max="200"
+                    value={zoomLevel}
+                    onChange={handleZoomChange}
+                    className="w-40 mx-2"
                   />
-                  <PlusCircleIcon className="h-6 w-6 cursor-pointer" />
+                  <PlusCircleIcon
+                    className="h-6 w-6 cursor-pointer"
+                    onClick={zoomIn}
+                  />
                 </div>
                 <div className="flex space-x-2">
                   <ArrowUturnLeftIcon className="h-6 w-6 cursor-pointer" />
