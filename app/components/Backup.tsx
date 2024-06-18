@@ -320,14 +320,15 @@ const ProfileCard: React.FC = () => {
           </div>
         </div>
       )}
-      {/* <br />
-      <br /> */}
-      {/* {crop && (
+      <br />
+      <br />
+
+      {crop && (
         <canvas
           ref={previewCanvasRef}
           className="w-36 h-36 rounded-full border-4 border-white"
         />
-      )} */}
+      )}
     </div>
   );
 };
