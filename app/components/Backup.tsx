@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { CameraIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import {
   ArrowUpCircleIcon,
@@ -9,9 +9,11 @@ import {
 } from "@heroicons/react/24/outline";
 import ReactCrop, {
   centerCrop,
+  convertToPixelCrop,
   makeAspectCrop,
   type Crop,
 } from "react-image-crop";
+import setCanvasPreview from "~/util/setCanvasPreview";
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
 const ProfileCard: React.FC = () => {
@@ -21,9 +23,14 @@ const ProfileCard: React.FC = () => {
   const [zoomLevel, setZoomLevel] = useState(100);
   const [rotation, setRotation] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
   //
 
   const [imgSrc, setImgSrc] = useState("");
+  const [profileImg, setProfileImg] = useState(
+    "https://via.placeholder.com/150"
+  );
   const [crop, setCrop] = useState<Crop>({
     unit: "px", // Can be 'px' or '%'
     x: 25,
@@ -51,7 +58,7 @@ const ProfileCard: React.FC = () => {
     reader.addEventListener("load", () => {
       const imageUrl = reader.result?.toString() || "";
       setImgSrc(imageUrl);
-      console.log(imageUrl);
+      // console.log(imageUrl);
     });
     reader.readAsDataURL(file as Blob);
   };
@@ -68,25 +75,39 @@ const ProfileCard: React.FC = () => {
   };
 
   function onImageLoad(e: any) {
-    const { naturalWidth: width, naturalHeight: height } = e.currentTarget;
+    // const { naturalWidth: width, naturalHeight: height } = e.currentTarget;
 
-    const crop = centerCrop(
-      makeAspectCrop(
-        {
-          // You don't need to pass a complete crop into
-          // makeAspectCrop or centerCrop.
-          unit: "%",
-          width: 90,
-        },
-        1,
-        width,
-        height
-      ),
+    // const crop = centerCrop(
+    //   makeAspectCrop(
+    //     {
+    //       // You don't need to pass a complete crop into
+    //       // makeAspectCrop or centerCrop.
+    //       unit: "%",
+    //       width: 90,
+    //     },
+    //     1,
+    //     width,
+    //     height
+    //   ),
+    //   width,
+    //   height
+    // );
+
+    // setCrop(crop);
+    const { width, height } = e.currentTarget;
+    const cropWidthInPercent = (MIN_DIMENSION / width) * 100;
+
+    const crop = makeAspectCrop(
+      {
+        unit: "%",
+        width: cropWidthInPercent,
+      },
+      ASPECT_RATIO,
       width,
       height
     );
-
-    setCrop(crop);
+    const centeredCrop = centerCrop(crop, width, height);
+    setCrop(centeredCrop);
   }
 
   return (
@@ -108,10 +129,11 @@ const ProfileCard: React.FC = () => {
         {/* Profile Picture */}
         <div className="absolute bottom-0 left-4 transform translate-y-1/2">
           <img
-            src="https://via.placeholder.com/150"
+            src={profileImg}
             alt="Profile Picture"
             className="w-36 h-36 rounded-full border-4 border-white"
           />
+
           {/* Camera Icon for Profile Picture */}
           <div
             className="absolute bottom-0 right-0 bg-black bg-opacity-50 text-white rounded-full p-2 cursor-pointer"
@@ -200,16 +222,18 @@ const ProfileCard: React.FC = () => {
                     keepSelection
                     aspect={ASPECT_RATIO}
                     minWidth={MIN_DIMENSION}
-                    onChange={(c) => {
-                      // console.log("c = > ", c);
-                      // const centeredCrop = centerCrop(c, c.width, c.height);
-                      return setCrop(c);
-                    }}
+                    // onChange={(c) => {
+                    //   // console.log("c = > ", c);
+                    //   // const centeredCrop = centerCrop(c, c.width, c.height);
+                    //   return setCrop(c);
+                    // }}
+                    onChange={(pixelCrop, percentCrop) => setCrop(percentCrop)}
                   >
                     <img
+                      ref={imgRef}
                       src={imgSrc}
                       className=" object-cover rounded-lg"
-                      style={{ maxHeight: "170px" }}
+                      style={{ maxHeight: "200px" }}
                       onLoad={onImageLoad}
                     />
                   </ReactCrop>
@@ -254,7 +278,26 @@ const ProfileCard: React.FC = () => {
                     ? "bg-blue-500 text-white"
                     : "bg-gray-200 text-black"
                 }`}
-                onClick={closeModal}
+                onClick={() => {
+                  const imgElement = imgRef.current;
+                  const canvasElement = previewCanvasRef.current;
+
+                  if (imgElement && canvasElement) {
+                    setCanvasPreview(
+                      imgElement, // HTMLImageElement
+                      canvasElement, // HTMLCanvasElement
+                      convertToPixelCrop(
+                        crop,
+                        imgElement.width,
+                        imgElement.height
+                      )
+                    );
+                    const dataUrl = canvasElement.toDataURL();
+                    console.log("dataURL ", dataUrl);
+                    setProfileImg(dataUrl);
+                    closeModal();
+                  }
+                }}
               >
                 Save
               </button>
@@ -277,6 +320,14 @@ const ProfileCard: React.FC = () => {
           </div>
         </div>
       )}
+      {/* <br />
+      <br /> */}
+      {/* {crop && (
+        <canvas
+          ref={previewCanvasRef}
+          className="w-36 h-36 rounded-full border-4 border-white"
+        />
+      )} */}
     </div>
   );
 };
