@@ -14,8 +14,11 @@ import ReactCrop, {
   type Crop,
 } from "react-image-crop";
 import setCanvasPreview from "~/util/setCanvasPreview";
+import "react-image-crop/dist/ReactCrop.css";
+
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
+
 const ProfileCard: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [imageSelected, setImageSelected] = useState(false);
@@ -25,20 +28,19 @@ const ProfileCard: React.FC = () => {
   const [flipped, setFlipped] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  //
 
   const [imgSrc, setImgSrc] = useState("");
   const [profileImg, setProfileImg] = useState(
     "https://via.placeholder.com/150"
   );
   const [crop, setCrop] = useState<Crop>({
-    unit: "px", // Can be 'px' or '%'
+    unit: "px",
     x: 25,
     y: 25,
     width: 50,
     height: 50,
   });
-  //
+
   const openModal = () => {
     setShowModal(true);
   };
@@ -58,7 +60,6 @@ const ProfileCard: React.FC = () => {
     reader.addEventListener("load", () => {
       const imageUrl = reader.result?.toString() || "";
       setImgSrc(imageUrl);
-      // console.log(imageUrl);
     });
     reader.readAsDataURL(file as Blob);
   };
@@ -66,6 +67,7 @@ const ProfileCard: React.FC = () => {
   const handleZoomChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setZoomLevel(parseInt(event.target.value));
   };
+
   const zoomIn = () => {
     setZoomLevel((prev) => prev + 10);
   };
@@ -75,25 +77,6 @@ const ProfileCard: React.FC = () => {
   };
 
   function onImageLoad(e: any) {
-    // const { naturalWidth: width, naturalHeight: height } = e.currentTarget;
-
-    // const crop = centerCrop(
-    //   makeAspectCrop(
-    //     {
-    //       // You don't need to pass a complete crop into
-    //       // makeAspectCrop or centerCrop.
-    //       unit: "%",
-    //       width: 90,
-    //     },
-    //     1,
-    //     width,
-    //     height
-    //   ),
-    //   width,
-    //   height
-    // );
-
-    // setCrop(crop);
     const { width, height } = e.currentTarget;
     const cropWidthInPercent = (MIN_DIMENSION / width) * 100;
 
@@ -111,30 +94,25 @@ const ProfileCard: React.FC = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto bg-white shadow-md ">
-      {/* Cover Photo */}
+    <div className="max-w-5xl mx-auto bg-white shadow-md">
       <div className="relative">
         <img
           src="https://via.placeholder.com/1200x300"
           alt="Cover Photo"
           className="w-full h-72 object-cover"
         />
-        {/* Camera Icon for Cover Photo */}
         <div
           className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white rounded-full p-2 cursor-pointer"
           onClick={openModal}
         >
           <CameraIcon className="h-6 w-6" />
         </div>
-        {/* Profile Picture */}
         <div className="absolute bottom-0 left-4 transform translate-y-1/2">
           <img
             src={profileImg}
             alt="Profile Picture"
             className="w-36 h-36 rounded-full border-4 border-white"
           />
-
-          {/* Camera Icon for Profile Picture */}
           <div
             className="absolute bottom-0 right-0 bg-black bg-opacity-50 text-white rounded-full p-2 cursor-pointer"
             onClick={openModal}
@@ -143,28 +121,23 @@ const ProfileCard: React.FC = () => {
           </div>
         </div>
       </div>
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center">
           <div
-            className="bg-white p-8 max-w-lg w-full  rounded-lg relative"
+            className="bg-white p-8 max-w-lg w-full rounded-lg relative"
             style={{
               minHeight: "350px",
               height: imageSelected ? "400px" : "350px",
               transition: "height 0.3s ease",
             }}
           >
-            {/* Close Icon */}
             <div
               className="absolute top-2 right-2 cursor-pointer text-lg"
               onClick={closeModal}
             >
-              {/* X */}
               <XMarkIcon className="h-6 w-6" />
             </div>
-            {/* Modal Header */}
             <h3 className="text font-semibold mb-4">Upload Photo</h3>
-            {/* Drop Zone */}
             <div
               className="border-dashed border-2 border-gray-300 rounded-lg p-4 mb-4 shadow-xl h-[180px] w-full flex flex-col items-center justify-center"
               style={{
@@ -174,14 +147,12 @@ const ProfileCard: React.FC = () => {
             >
               {!imageSelected ? (
                 <>
-                  {/* Drag and Drop Area */}
                   <div>
                     <ArrowUpCircleIcon
                       className="h-8 w-8 mb-2"
                       style={{ stroke: "blue" }}
                     />
                   </div>
-                  {/* Or Upload Button */}
                   <p>
                     <span>
                       Drag and Drop or{" "}
@@ -194,9 +165,7 @@ const ProfileCard: React.FC = () => {
                       to Upload
                     </span>
                   </p>
-
                   <span className="text-gray-400">Files must be under 5MB</span>
-
                   <input
                     id="fileInput"
                     type="file"
@@ -205,42 +174,29 @@ const ProfileCard: React.FC = () => {
                   />
                 </>
               ) : (
-                <div
-                  className="flex justify-center items-center w-full h-full"
-                  style={{
-                    transform: `scale(${zoomLevel / 100})`,
-                  }}
-                >
-                  {/* <img
-                    src={URL.createObjectURL(uploadedImage as Blob)}
-                    alt=""
-                    className="max-h-full max-w-full object-cover rounded-lg"
-                  /> */}
+                <div className="flex justify-center items-center w-full h-full overflow-hidden">
                   <ReactCrop
                     crop={crop}
                     circularCrop
                     keepSelection
                     aspect={ASPECT_RATIO}
                     minWidth={MIN_DIMENSION}
-                    // onChange={(c) => {
-                    //   // console.log("c = > ", c);
-                    //   // const centeredCrop = centerCrop(c, c.width, c.height);
-                    //   return setCrop(c);
-                    // }}
                     onChange={(pixelCrop, percentCrop) => setCrop(percentCrop)}
                   >
                     <img
                       ref={imgRef}
                       src={imgSrc}
-                      className=" object-cover rounded-lg"
-                      style={{ maxHeight: "200px" }}
+                      className="object-cover rounded-lg"
+                      style={{
+                        transform: `scale(${zoomLevel / 100})`,
+                        maxHeight: "200px",
+                      }}
                       onLoad={onImageLoad}
                     />
                   </ReactCrop>
                 </div>
               )}
             </div>
-            {/* Image Controls */}
             {imageSelected && (
               <div className="flex justify-between mb-2">
                 <div className="flex">
@@ -267,10 +223,6 @@ const ProfileCard: React.FC = () => {
                 </div>
               </div>
             )}
-
-            {/*  */}
-
-            {/* Buttons */}
             <div className="flex justify-center">
               <button
                 className={`px-8 py-2 rounded-full mr-4 ${
@@ -284,8 +236,8 @@ const ProfileCard: React.FC = () => {
 
                   if (imgElement && canvasElement) {
                     setCanvasPreview(
-                      imgElement, // HTMLImageElement
-                      canvasElement, // HTMLCanvasElement
+                      imgElement,
+                      canvasElement,
                       convertToPixelCrop(
                         crop,
                         imgElement.width,
@@ -301,7 +253,6 @@ const ProfileCard: React.FC = () => {
               >
                 Save
               </button>
-
               <button
                 className="border border-black text-black bg-white px-8 py-2 rounded-full"
                 onClick={closeModal}
@@ -320,13 +271,10 @@ const ProfileCard: React.FC = () => {
           </div>
         </div>
       )}
-      <br />
-      <br />
-
       {crop && (
         <canvas
           ref={previewCanvasRef}
-          className="w-36 h-36 rounded-full border-4 border-white"
+          className="w-36 h-36 rounded-full border-4 border-white hidden"
         />
       )}
     </div>
