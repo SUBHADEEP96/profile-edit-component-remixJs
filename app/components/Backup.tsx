@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { CameraIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import {
   ArrowUpCircleIcon,
@@ -49,8 +49,7 @@ const ProfileCard: React.FC = () => {
     setShowModal(false);
   };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files ? event.target.files[0] : null;
+  const handleImageChange = (file: File | null) => {
     if (file) {
       setUploadedImage(file);
       setImageSelected(true);
@@ -61,7 +60,26 @@ const ProfileCard: React.FC = () => {
       const imageUrl = reader.result?.toString() || "";
       setImgSrc(imageUrl);
     });
-    reader.readAsDataURL(file as Blob);
+    if (file) reader.readAsDataURL(file);
+  };
+
+  const handleFileInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files ? event.target.files[0] : null;
+    handleImageChange(file);
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const file = event.dataTransfer.files ? event.dataTransfer.files[0] : null;
+    handleImageChange(file);
   };
 
   const handleZoomChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,6 +162,8 @@ const ProfileCard: React.FC = () => {
                 boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
                 transform: "translateY(-10px)",
               }}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
             >
               {!imageSelected ? (
                 <>
@@ -170,7 +190,7 @@ const ProfileCard: React.FC = () => {
                     id="fileInput"
                     type="file"
                     className="hidden"
-                    onChange={handleImageChange}
+                    onChange={handleFileInputChange}
                   />
                 </>
               ) : (
