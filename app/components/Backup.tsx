@@ -25,7 +25,6 @@ const ProfileCard: React.FC = () => {
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [zoomLevel, setZoomLevel] = useState(100);
   const [rotation, setRotation] = useState(0);
-  const [flipped, setFlipped] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -92,6 +91,14 @@ const ProfileCard: React.FC = () => {
 
   const zoomOut = () => {
     setZoomLevel((prev) => Math.max(prev - 10, 10));
+  };
+
+  const rotateLeft = () => {
+    setRotation((prev) => prev - 45);
+  };
+
+  const rotateRight = () => {
+    setRotation((prev) => prev + 45);
   };
 
   function onImageLoad(e: any) {
@@ -208,7 +215,9 @@ const ProfileCard: React.FC = () => {
                       src={imgSrc}
                       className="object-cover rounded-lg"
                       style={{
-                        transform: `scale(${zoomLevel / 100})`,
+                        transform: `scale(${
+                          zoomLevel / 100
+                        }) rotate(${rotation}deg)`,
                         maxHeight: "200px",
                       }}
                       onLoad={onImageLoad}
@@ -238,8 +247,14 @@ const ProfileCard: React.FC = () => {
                   />
                 </div>
                 <div className="flex space-x-2">
-                  <ArrowUturnLeftIcon className="h-6 w-6 cursor-pointer" />
-                  <ArrowUturnRightIcon className="h-6 w-6 cursor-pointer" />
+                  <ArrowUturnLeftIcon
+                    className="h-6 w-6 cursor-pointer"
+                    onClick={rotateLeft}
+                  />
+                  <ArrowUturnRightIcon
+                    className="h-6 w-6 cursor-pointer"
+                    onClick={rotateRight}
+                  />
                 </div>
               </div>
             )}
@@ -265,7 +280,6 @@ const ProfileCard: React.FC = () => {
                       )
                     );
                     const dataUrl = canvasElement.toDataURL();
-                    console.log("dataURL ", dataUrl);
                     setProfileImg(dataUrl);
                     closeModal();
                   }
