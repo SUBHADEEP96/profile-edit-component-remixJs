@@ -6,6 +6,9 @@ import {
   MinusCircleIcon,
   ArrowUturnLeftIcon,
   ArrowUturnRightIcon,
+  ArrowUpTrayIcon,
+  TrashIcon,
+  ViewfinderCircleIcon,
 } from "@heroicons/react/24/outline";
 import ReactCrop, {
   centerCrop,
@@ -170,7 +173,10 @@ const ProfileCard: React.FC = () => {
               <div className="absolute top-0 right-0 mt-6 w-48 bg-gray-800 text-white rounded shadow-lg">
                 <div className="p-2 hover:bg-gray-600">
                   <label htmlFor="fileInput" className="cursor-pointer">
-                    Upload
+                    <span className="flex gap-2">
+                      <ArrowUpTrayIcon className="h-6 w-6" />
+                      Upload
+                    </span>
                   </label>
                   <input
                     id="fileInput"
@@ -180,10 +186,16 @@ const ProfileCard: React.FC = () => {
                   />
                 </div>
                 <div className="p-2 hover:bg-gray-600" onClick={() => {}}>
-                  Reposition
+                  <span className="flex gap-2">
+                    <ViewfinderCircleIcon className="h-6 w-6" />
+                    Reposition
+                  </span>
                 </div>
                 <div className="p-2 hover:bg-gray-600" onClick={() => {}}>
-                  Remove
+                  <span className="flex gap-2">
+                    <TrashIcon className="h-6 w-6" />
+                    Remove
+                  </span>
                 </div>
               </div>
             )}
