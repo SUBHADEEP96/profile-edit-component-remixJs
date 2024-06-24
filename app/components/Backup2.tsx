@@ -185,13 +185,19 @@ const ProfileCard: React.FC = () => {
                     onChange={handleFileInputChange}
                   />
                 </div>
-                <div className="p-2 hover:bg-gray-600" onClick={() => {}}>
+                <div
+                  className="p-2 cursor-pointer hover:bg-gray-600"
+                  onClick={() => {}}
+                >
                   <span className="flex gap-2">
                     <ViewfinderCircleIcon className="h-6 w-6" />
                     Reposition
                   </span>
                 </div>
-                <div className="p-2 hover:bg-gray-600" onClick={() => {}}>
+                <div
+                  className="p-2 cursor-pointer hover:bg-gray-600"
+                  onClick={() => {}}
+                >
                   <span className="flex gap-2">
                     <TrashIcon className="h-6 w-6" />
                     Remove
