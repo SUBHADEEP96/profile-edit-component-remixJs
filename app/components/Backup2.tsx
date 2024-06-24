@@ -32,6 +32,11 @@ const ProfileCard: React.FC = () => {
   const [profileImg, setProfileImg] = useState(
     "https://via.placeholder.com/150"
   );
+
+  //cover image
+
+  const [showDropdown, setShowDropdown] = useState(false);
+  //
   const [crop, setCrop] = useState<Crop>({
     unit: "px",
     x: 25,
@@ -120,7 +125,7 @@ const ProfileCard: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto bg-white shadow-md">
-      <div className="relative">
+      {/* <div className="relative">
         <img
           src="https://via.placeholder.com/1200x300"
           alt="Cover Photo"
@@ -145,7 +150,60 @@ const ProfileCard: React.FC = () => {
             <CameraIcon className="h-6 w-6" />
           </div>
         </div>
+      </div> */}
+      {/*  */}
+      <div className="relative">
+        <img
+          src="https://via.placeholder.com/1200x300"
+          alt="Cover Photo"
+          className="w-full h-72 object-cover"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        />
+        <div className="absolute bottom-4 right-4">
+          <div className="relative">
+            <CameraIcon
+              className="h-6 w-6 cursor-pointer"
+              onClick={() => setShowDropdown(!showDropdown)}
+            />
+            {showDropdown && (
+              <div className="absolute top-0 right-0 mt-6 w-48 bg-gray-800 text-white rounded shadow-lg">
+                <div className="p-2 hover:bg-gray-600">
+                  <label htmlFor="fileInput" className="cursor-pointer">
+                    Upload
+                  </label>
+                  <input
+                    id="fileInput"
+                    type="file"
+                    className="hidden"
+                    onChange={handleFileInputChange}
+                  />
+                </div>
+                <div className="p-2 hover:bg-gray-600" onClick={() => {}}>
+                  Reposition
+                </div>
+                <div className="p-2 hover:bg-gray-600" onClick={() => {}}>
+                  Remove
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-4 transform translate-y-1/2">
+          <img
+            src={profileImg}
+            alt="Profile Picture"
+            className="w-36 h-36 rounded-full border-4 border-white"
+          />
+          <div
+            className="absolute bottom-0 right-0 bg-black bg-opacity-50 text-white rounded-full p-2 cursor-pointer"
+            onClick={openModal}
+          >
+            <CameraIcon className="h-6 w-6" />
+          </div>
+        </div>
       </div>
+      {/*  */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center">
           <div
