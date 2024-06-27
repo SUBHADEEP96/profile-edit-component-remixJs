@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef } from "react";
 import { CameraIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import {
   ArrowUpCircleIcon,
@@ -6,9 +6,6 @@ import {
   MinusCircleIcon,
   ArrowUturnLeftIcon,
   ArrowUturnRightIcon,
-  ArrowUpTrayIcon,
-  TrashIcon,
-  ViewfinderCircleIcon,
 } from "@heroicons/react/24/outline";
 import ReactCrop, {
   centerCrop,
@@ -21,8 +18,7 @@ import "react-image-crop/dist/ReactCrop.css";
 
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
-
-const ProfileCard: React.FC = () => {
+const Thumbnail = () => {
   const [showModal, setShowModal] = useState(false);
   const [imageSelected, setImageSelected] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
@@ -36,10 +32,6 @@ const ProfileCard: React.FC = () => {
     "https://via.placeholder.com/150"
   );
 
-  //cover image
-
-  const [showDropdown, setShowDropdown] = useState(false);
-  //
   const [crop, setCrop] = useState<Crop>({
     unit: "px",
     x: 25,
@@ -125,75 +117,22 @@ const ProfileCard: React.FC = () => {
     const centeredCrop = centerCrop(crop, width, height);
     setCrop(centeredCrop);
   }
-
   return (
-    <div className="max-w-5xl mx-auto bg-white shadow-md">
-      <div className="relative">
+    <>
+      <div className="absolute bottom-0 left-4 transform translate-y-1/2">
         <img
-          src="https://via.placeholder.com/1200x300"
-          alt="Cover Photo"
-          className="w-full h-72 object-cover"
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
+          src={profileImg}
+          alt="Profile Picture"
+          className="w-36 h-36 rounded-full border-4 border-white"
         />
-        <div className="absolute bottom-4 right-4">
-          <div className="relative">
-            <CameraIcon
-              className="h-6 w-6 cursor-pointer"
-              onClick={() => setShowDropdown(!showDropdown)}
-            />
-            {showDropdown && (
-              <div className="absolute top-0 right-0 mt-6 w-48 bg-gray-800 text-white rounded shadow-lg">
-                <div className="p-2 hover:bg-gray-600">
-                  <label htmlFor="fileInput" className="cursor-pointer">
-                    <span className="flex gap-2">
-                      <ArrowUpTrayIcon className="h-6 w-6" />
-                      Upload
-                    </span>
-                  </label>
-                  <input
-                    id="fileInput"
-                    type="file"
-                    className="hidden"
-                    onChange={handleFileInputChange}
-                  />
-                </div>
-                <div
-                  className="p-2 cursor-pointer hover:bg-gray-600"
-                  onClick={() => {}}
-                >
-                  <span className="flex gap-2">
-                    <ViewfinderCircleIcon className="h-6 w-6" />
-                    Reposition
-                  </span>
-                </div>
-                <div
-                  className="p-2 cursor-pointer hover:bg-gray-600"
-                  onClick={() => {}}
-                >
-                  <span className="flex gap-2">
-                    <TrashIcon className="h-6 w-6" />
-                    Remove
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="absolute bottom-0 left-4 transform translate-y-1/2">
-          <img
-            src={profileImg}
-            alt="Profile Picture"
-            className="w-36 h-36 rounded-full border-4 border-white"
-          />
-          <div
-            className="absolute bottom-0 right-0 bg-black bg-opacity-50 text-white rounded-full p-2 cursor-pointer"
-            onClick={openModal}
-          >
-            <CameraIcon className="h-6 w-6" />
-          </div>
+        <div
+          className="absolute bottom-0 right-0 bg-black bg-opacity-50 text-white rounded-full p-2 cursor-pointer"
+          onClick={openModal}
+        >
+          <CameraIcon className="h-6 w-6" />
         </div>
       </div>
+
       {/*  */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center">
@@ -363,8 +302,8 @@ const ProfileCard: React.FC = () => {
           className="w-36 h-36 rounded-full border-4 border-white hidden"
         />
       )}
-    </div>
+    </>
   );
 };
 
-export default ProfileCard;
+export default Thumbnail;
