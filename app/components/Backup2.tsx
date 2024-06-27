@@ -128,33 +128,6 @@ const ProfileCard: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto bg-white shadow-md">
-      {/* <div className="relative">
-        <img
-          src="https://via.placeholder.com/1200x300"
-          alt="Cover Photo"
-          className="w-full h-72 object-cover"
-        />
-        <div
-          className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white rounded-full p-2 cursor-pointer"
-          onClick={openModal}
-        >
-          <CameraIcon className="h-6 w-6" />
-        </div>
-        <div className="absolute bottom-0 left-4 transform translate-y-1/2">
-          <img
-            src={profileImg}
-            alt="Profile Picture"
-            className="w-36 h-36 rounded-full border-4 border-white"
-          />
-          <div
-            className="absolute bottom-0 right-0 bg-black bg-opacity-50 text-white rounded-full p-2 cursor-pointer"
-            onClick={openModal}
-          >
-            <CameraIcon className="h-6 w-6" />
-          </div>
-        </div>
-      </div> */}
-      {/*  */}
       <div className="relative">
         <img
           src="https://via.placeholder.com/1200x300"
