@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model User {
+  id             Int    @id @default(autoincrement())
+  name           String
+  email          String @unique
+  profileImage   Image? @relation("ProfileImage", fields: [profileImageId], references: [id])
+  profileImageId Int?   @unique
+  coverImage     Image? @relation("CoverImage", fields: [coverImageId], references: [id])
+  coverImageId   Int?   @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Image {
+  id          Int            @id @default(autoincrement())
+  url         String
+  positionX   Int            @default(0) // X position for cover image
+  positionY   Int            @default(0) // Y position for cover image
+  width       Int            @default(0) // Width for cover image
+  height      Int            @default(0) // Height for cover image
+  user        User?          @relation("ProfileImage")
+  coverUser   User?          @relation("CoverImage")
+  versions    ImageVersion[] // Versions for profile image
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model ImageVersion {
+  id        Int      @id @default(autoincrement())
+  url       String
+  image     Image    @relation(fields: [imageId], references: [id])
+  imageId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
