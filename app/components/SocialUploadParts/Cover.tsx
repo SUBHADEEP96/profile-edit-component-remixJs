@@ -56,8 +56,8 @@ const Cover = () => {
     let newY = e.pageY - rel.y;
 
     // Constrain movement within the container
-    const containerWidth = 1200; // Width of the container
-    const containerHeight = 300; // Height of the container
+    const containerWidth = 514; // Width of the container
+    const containerHeight = 121; // Height of the container
 
     // Constrain horizontal movement
     if (newX > 0) newX = 0;
@@ -126,7 +126,7 @@ const Cover = () => {
             />
 
             <div className="text-center text-btfont">
-              <p>Drag and drop image here</p>
+              {/* <p>Drag and drop image here</p> */}
             </div>
           </>
         )}

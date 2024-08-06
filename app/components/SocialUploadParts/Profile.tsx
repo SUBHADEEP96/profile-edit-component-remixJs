@@ -370,7 +370,7 @@ const Profile: React.FC = () => {
               aria-hidden="true"
             />
             <div className="text-center">
-              <p className="text-btfont">Drag and drop image here</p>
+              {/* <p className="text-btfont">Drag and drop image here</p> */}
             </div>
           </div>
         )}
