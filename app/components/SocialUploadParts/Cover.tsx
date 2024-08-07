@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useRef, MouseEvent } from "react";
-import { ArrowUpTrayIcon } from "@heroicons/react/20/solid";
+import {
+  ArrowUpTrayIcon,
+  XCircleIcon,
+  XMarkIcon,
+} from "@heroicons/react/20/solid";
 
 const Cover = () => {
   const [coverImage, setCoverImage] = useState(
@@ -11,7 +15,7 @@ const Cover = () => {
   const [dragging, setDragging] = useState(false);
   const [rel, setRel] = useState({ x: 0, y: 0 }); // Mouse offset
   const [imgDimensions, setImgDimensions] = useState({ width: 0, height: 0 }); // Image dimensions
-
+  const [imgName, setImgName] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Handler for image upload
@@ -24,6 +28,8 @@ const Cover = () => {
         if (e.target && e.target.result) {
           setCoverImage(e.target.result as string);
           setImageSelected(true);
+          // console.log("file ", file?.name);
+          setImgName(file?.name);
           setImagePosition({ x: 0, y: 0 }); // Reset image position on upload
         }
       };
@@ -33,9 +39,7 @@ const Cover = () => {
   };
 
   // Handlers for dragging the image
-  const handleMouseDown = (
-    e: React.MouseEvent<HTMLImageElement, MouseEvent>
-  ) => {
+  const handleMouseDown = (e: MouseEvent) => {
     if (e.button !== 0) return; // Only left mouse button
     const pos = { x: e.pageX, y: e.pageY };
     const rel = { x: pos.x - imagePosition.x, y: pos.y - imagePosition.y };
@@ -82,7 +86,7 @@ const Cover = () => {
     setImgDimensions({ width: naturalWidth, height: naturalHeight });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (dragging) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
@@ -131,7 +135,20 @@ const Cover = () => {
           </>
         )}
       </div>
+      {imageSelected ? (
+        <div className="flex justify-center items-center gap-4">
+          <p>{imgName}</p>
 
+          <XMarkIcon
+            className="w-[20px] h-[20px] cursor-pointer mt-[3px] text-gray-600"
+            onClick={() => {
+              setImageSelected(false);
+            }}
+          />
+        </div>
+      ) : (
+        <></>
+      )}
       <div className="flex justify-center">
         <button
           className="mt-2 px-4 py-2 text-white bg-indigo-600 rounded w-full text-xs"
